@@ -2,6 +2,8 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { useState } from 'react';
 import { ref,push,set } from '@firebase/database';
 import { db } from '../Firebase/firebaseconnection';
+import Lista from '../Lista';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function Home({route}) {
 
@@ -12,6 +14,10 @@ export default function Home({route}) {
     const [nota3, setNota3] = useState('')
     const [nota4, setNota4] = useState('')
 
+    const resultado = parseInt(nota1) + parseInt(nota2) + parseInt(nota3) + parseInt(nota4) 
+
+    const navigation = useNavigation()
+
     const salvarAluno = async() => {
         const refAluno = ref(db, 'Alunos')
         const newrefAluno = push(refAluno)
@@ -20,8 +26,17 @@ export default function Home({route}) {
             Nota1: nota1,
             Nota2: nota2,
             Nota3: nota3,
-            Nota4: nota4
-        }).catch(error => console.log(error))
+            Nota4: nota4,
+            Resultado: resultado / 4
+        }).catch(error => console.log(error));
+        return resultado
+    }
+    const botaoLista = () => {
+        if(nome == '' || nota1 == '' || nota2 == '' || nota3 == '' || nota4 == '') {
+            return
+        }else {
+            navigation.navigate('Lista', {nome,nota1,nota2,nota3,nota4,resultado})
+        }
     }
     return (
     <View style={styles.container}>
@@ -42,8 +57,9 @@ export default function Home({route}) {
             <TextInput style={{width:'80%', height:30, borderWidth:1, marginTop:5,marginBottom:10, padding:10,borderRadius:20}} value={nota3} onChangeText={nota3 => setNota3(nota3)}></TextInput>
             <Text style={{fontSize:25}}>nota4 </Text>
             <TextInput style={{width:'80%', height:30, borderWidth:1, marginTop:5,marginBottom:10,padding:10, borderRadius:20}} value={nota4} onChangeText={nota4 => setNota4(nota4)}></TextInput>
-            <TouchableOpacity onPress={() => salvarAluno()} style={{marginTop:20, borderWidth:1, width:'70%', borderRadius:20,backgroundColor:'black', alignItems:'center', justifyContent:'center', padding:5}}><Text style={{color:'white'}}>Calcular</Text></TouchableOpacity>
-            <Text style={{marginTop:20, fontSize:25}}>O resultado é</Text>
+            <Text style={{marginTop:20, fontSize:25}}>a media desse aluno é: {resultado/4}</Text>
+            <TouchableOpacity onPress={() => salvarAluno()} style={{marginTop:20, borderWidth:1, width:'70%', borderRadius:20,backgroundColor:'black', alignItems:'center', justifyContent:'center', padding:5}}><Text style={{color:'white'}}>Cadastrar</Text></TouchableOpacity>
+            <TouchableOpacity style={{padding:10, width:"100%"}} onPress={() => botaoLista()}><Text style={{fontSize:20, marginTop:5}}>Lista do aluno</Text></TouchableOpacity>
         </View>
     </View>
   )
