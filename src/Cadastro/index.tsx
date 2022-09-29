@@ -28,7 +28,7 @@ export default function Cadastro() {
     })
     .catch(error => {
     if(error.code === 'auth/email-already-in-use') {
-      alert('Email ja existe no nosso sistema')
+      alert('Bem-vindo')
       console.log(error)
     }
     if(error.code === 'auth/invalid-email') {

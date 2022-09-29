@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useState } from 'react';
-import { ref,push,set } from '@firebase/database';
+import { useState, useEffect} from 'react';
+import { ref,push,set, onValue,update} from '@firebase/database';
 import { db } from '../Firebase/firebaseconnection';
 import Lista from '../Lista';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -13,10 +13,15 @@ export default function Home({route}) {
     const [nota2, setNota2] = useState('')
     const [nota3, setNota3] = useState('')
     const [nota4, setNota4] = useState('')
-
     const resultado = parseInt(nota1) + parseInt(nota2) + parseInt(nota3) + parseInt(nota4) 
 
     const navigation = useNavigation()
+
+    const dados = [
+        nome,
+        route.params.email,
+        resultado
+    ]
 
     const salvarAluno = async() => {
         const refAluno = ref(db, 'Alunos')
@@ -29,8 +34,21 @@ export default function Home({route}) {
             Nota4: nota4,
             Resultado: resultado / 4
         }).catch(error => console.log(error));
-        return resultado
+        
+        alert('Cadastrado')
+
+        console.log(dados)
+
+        return resultado; 
     }
+    const getAluno = async () => {
+        const refAlunos = ref(db, 'Alunos/')
+        onValue(refAlunos, (snapshot) => {
+          if (snapshot.exists()) {
+            setAluno(snapshot.val());
+          }
+        })
+      }
     const botaoLista = () => {
         if(nome == '' || nota1 == '' || nota2 == '' || nota3 == '' || nota4 == '') {
             return
@@ -38,6 +56,10 @@ export default function Home({route}) {
             navigation.navigate('Lista', {nome,nota1,nota2,nota3,nota4,resultado})
         }
     }
+    useEffect(() => {
+        getAluno()
+    },[])
+    
     return (
     <View style={styles.container}>
         <View style={styles.ViewTexto}>

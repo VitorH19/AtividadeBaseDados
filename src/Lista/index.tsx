@@ -1,14 +1,8 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { getDatabase, ref, onValue} from "firebase/database";
-import { useState } from 'react';
+import { getDatabase, ref, onValue, child, get} from "firebase/database";
+import { useEffect, useState } from 'react';
 
 export default function Lista({route}) {
-
-    const [aluno, setAluno] = useState('')
-
-    const db = getDatabase();
-
-    
 
     return (
         <View style={styles.container}>
